@@ -1,60 +1,35 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"time"
 )
 
-const version = "1.0.0"
-
-type config struct {
-	port int
-	env	string
-}
-
-type AppStatus struct {
-	Status string `json:"status"`
-	Environment string `json:"environment"`
-	Version string `json:"version"`
-}
+const port = 8080
 
 type application struct {
-	config config
-	logger *log.Logger
+	Domain string
 }
 
-func main(){
-	var cfg config
+func main() {
 
-	flag.IntVar(&cfg.port, "port", 4000, "Server port to listen on")
-	flag.StringVar(&cfg.env, "env", "dev", "Application environment (dev|prod)")
-	flag.Parse()
+	// Set application config
+	var app application
 
-	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	// Read from command line
 
-	app := &application{
-		config: cfg,
-		logger: logger,
-	}
+	// connect to the database
 
-	fmt.Println("Starting server....")
+	// start a web server
 
-	serve := &http.Server{
-		Addr: fmt.Sprintf(":%d", cfg.port),
-		Handler: app.routes(),
-		IdleTimeout: time.Minute,
-		ReadTimeout: 10 * time.Second,
-		WriteTimeout: 30 * time.Second,
-	}
+	app.Domain = "example.com"
 
-	logger.Println("Starting server on port", cfg.port)
-	
-	err := serve.ListenAndServe()
+	log.Println("Starting application on port", port)
+
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), app.routes())
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
+
 }
